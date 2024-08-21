@@ -39,7 +39,7 @@
                 <configuration>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
                     <webApp>
-                        <contextPath>/simple</contextPath>
+                        <contextPath>/</contextPath>
                     </webApp>
                 </configuration>
             </plugin>
