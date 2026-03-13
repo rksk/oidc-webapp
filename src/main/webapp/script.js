@@ -59,7 +59,7 @@ function setConfigParam(name, value) {
 
 function updateVisibility() {
     var grantType = configParams['grantType'];
-    var common = ['clientId', 'clientSecret', 'tokenEndpoint', 'revokeEndpoint', 'introspectEndpoint', 'grantType'];
+    var common = ['clientId', 'clientSecret', 'tokenEndpoint', 'revokeEndpoint', 'introspectEndpoint', 'userinfoEndpoint', 'grantType'];
     var authCode = ['scope', 'responseType', 'additionalParams', 'enablePkce', 'authorizeEndpoint', 'logoutEndpoint', 'redirectUri'];
     var cc = ['scope'];
     var password = ['username', 'password', 'scope'];
@@ -91,7 +91,7 @@ function updateVisibility() {
         }
     };
 
-    var allFields = ['clientId', 'clientSecret', 'scope', 'responseType', 'additionalParams', 'enablePkce', 'authorizeEndpoint', 'tokenEndpoint', 'logoutEndpoint', 'revokeEndpoint', 'introspectEndpoint', 'redirectUri', 'username', 'password'];
+    var allFields = ['clientId', 'clientSecret', 'scope', 'responseType', 'additionalParams', 'enablePkce', 'authorizeEndpoint', 'tokenEndpoint', 'logoutEndpoint', 'revokeEndpoint', 'introspectEndpoint', 'userinfoEndpoint', 'redirectUri', 'username', 'password'];
 
     allFields.forEach(hide);
 
@@ -141,6 +141,7 @@ registerInput("tokenEndpoint", "https://localhost:9443/oauth2/token");
 registerInput("logoutEndpoint", "https://localhost:9443/oidc/logout");
 registerInput("revokeEndpoint", "https://localhost:9443/oauth2/revoke");
 registerInput("introspectEndpoint", "https://localhost:9443/oauth2/introspect");
+registerInput("userinfoEndpoint", "https://localhost:9443/oauth2/userinfo");
 registerInput("redirectUri", redirectUri, true);
 
 updateVisibility();
@@ -268,6 +269,7 @@ function updateButtons() {
     if (access_token) {
         document.getElementById('revokeButton').style.display = 'inline';
         document.getElementById('introspectButton').style.display = 'inline';
+        document.getElementById('userinfoButton').style.display = 'inline';
     }
     if (refresh_token) {
         document.getElementById('refreshButton').style.display = 'inline';
@@ -411,6 +413,25 @@ document.getElementById("introspectButton").onclick = function () {
         token: access_token,
         endpoint: configParams['introspectEndpoint']
     }));
+}
+
+document.getElementById("userinfoButton").onclick = function () {
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (this.readyState !== 4) return;
+        if (this.status == 200) {
+            document.getElementById("result").innerHTML = "UserInfo Response: <pre>" + JSON.stringify(this.response, null, 4) + "</pre>" + message;
+        } else {
+            document.getElementById("result").innerHTML = "UserInfo request failed: <pre>" + JSON.stringify(this.response, null, 4) + "</pre>" + message;
+        }
+    };
+    xhr.responseType = 'json';
+    xhr.open("GET", bffEndpoint + "?" + new URLSearchParams({
+        endpoint: configParams['userinfoEndpoint'],
+        access_token: access_token
+    }), true);
+    xhr.send();
 }
 
 document.getElementById("logoutButton").onclick = function () {

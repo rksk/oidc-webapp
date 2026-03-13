@@ -2,6 +2,7 @@ package net.rksk.client.oidc;
 
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -67,6 +68,26 @@ public class Utils {
         }
 
         return new BffResponse(responseString, statusCode);
+    }
+
+    public static BffResponse doGet(String url, String accessToken) throws IOException {
+        try (CloseableHttpClient httpClient = createUnsafeHttpClient()) {
+            return doGet(url, accessToken, httpClient);
+        }
+    }
+
+    static BffResponse doGet(String url, String accessToken, CloseableHttpClient httpClient) throws IOException {
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setHeader("Authorization", "Bearer " + accessToken);
+
+        try (CloseableHttpResponse response = httpClient.execute(httpGet)) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            HttpEntity entity = response.getEntity();
+            String body = entity != null ? EntityUtils.toString(entity) : "";
+            return new BffResponse(body, statusCode);
+        } catch (Exception e) {
+            throw new IOException("Failed to execute GET request", e);
+        }
     }
 
     /**

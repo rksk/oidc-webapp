@@ -44,6 +44,7 @@
         <button id="logoutButton" class="btn btn-danger" style="display:none">Logout</button>
         <button id="revokeButton" class="btn btn-danger" style="display:none">Revoke Token</button>
         <button id="introspectButton" class="btn btn-secondary" style="display:none">Introspect Token</button>
+        <button id="userinfoButton" class="btn btn-secondary" style="display:none">User Info</button>
         <!--button class="btn btn-secondary" data-bs-toggle="collapse" data-bs-target="#configParams" aria-expanded="true"
                     aria-controls="configParams">Toggle Configs</button-->
       </div>

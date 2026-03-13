@@ -13,6 +13,27 @@ public class BFFServlet extends HttpServlet {
 
     private static final String ENDPOINT_PARAM = "endpoint";
     private static final String CLIENT_SECRET_PARAM = "client_secret";
+    private static final String ACCESS_TOKEN_PARAM = "access_token";
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String endpoint = req.getParameter(ENDPOINT_PARAM);
+        if (endpoint == null || endpoint.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing endpoint parameter");
+            return;
+        }
+
+        String accessToken = req.getParameter(ACCESS_TOKEN_PARAM);
+        if (accessToken == null || accessToken.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing access_token parameter");
+            return;
+        }
+
+        BffResponse response = Utils.doGet(endpoint, accessToken);
+        resp.setStatus(response.getStatusCode());
+        resp.setContentType("application/json");
+        resp.getWriter().write(response.getBody());
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
